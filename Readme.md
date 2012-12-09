@@ -25,9 +25,27 @@ result = client.Search<Document>()
             .GetResult();
 ```
 
-or filtering:
+or filtering...
+...by key/value:
+
 ```c#
 result = client.Search<Document>()
             .Filter(x => x.MetadataDictionary["Author"].Match("Henrik"))
+            .GetResult();
+```
+
+...by keys:
+
+```c#
+result = client.Search<Document>()
+            .Filter(x => x.MetadataDictionary.Keys.Match("Author"))
+            .GetResult();
+```
+
+...by values:
+
+```c#
+result = client.Search<Document>()
+            .Filter(x => x.MetadataDictionary.Values.Match("Henrik"))
             .GetResult();
 ```
