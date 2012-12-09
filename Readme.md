@@ -25,8 +25,7 @@ result = client.Search<Document>()
             .GetResult();
 ```
 
-or filtering...
-...by key/value:
+or filtering by key/value:
 
 ```c#
 result = client.Search<Document>()
