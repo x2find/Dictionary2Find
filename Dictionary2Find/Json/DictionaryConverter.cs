@@ -24,7 +24,9 @@ namespace Dictionary2Find.Json
         {
             // if it is a JsonDictionaryContract use the PropertyNameResolver
             var contract = serializer.ContractResolver.ResolveContract(value.GetType()) as JsonDictionaryContract;
-            
+            List<object> keys = new List<object>();
+            List<object> values = new List<object>();
+
             writer.WriteStartObject();
             foreach (var item in (IEnumerable)value)
             {
@@ -33,10 +35,17 @@ namespace Dictionary2Find.Json
                 PropertyInfo valueProperty = t.GetProperty("Value");
 
                 var keyPairKey = keyProperty.GetGetMethod().Invoke(item, null);
+                keys.Add(keyPairKey);
                 writer.WritePropertyName(!contract.IsNull() ? contract.PropertyNameResolver(keyPairKey.ToString()) : keyPairKey.ToString());
                 var keyPairValue = valueProperty.GetGetMethod().Invoke(item, null);
+                values.Add(keyPairValue);
                 serializer.Serialize(writer, keyPairValue);
             }
+
+            writer.WritePropertyName("Keys");
+            serializer.Serialize(writer, keys);
+            writer.WritePropertyName("Values");
+            serializer.Serialize(writer, values);
             writer.WriteEndObject();
         }
 
@@ -53,6 +62,13 @@ namespace Dictionary2Find.Json
             while (reader.TokenType == JsonToken.PropertyName)
             {
                 var keyValue = reader.Value.ToString();
+                if (keyValue.Equals("Keys") || keyValue.Equals("Values"))
+                {
+                    reader.Read();
+                    serializer.Deserialize(reader);
+                    reader.Read();
+                    continue;
+                }
                 key = PropertyNameDesolver(keyValue.ToString());
                 if(!keyType.IsAssignableFrom(typeof(string)))
                 {
