@@ -13,10 +13,10 @@ using Dictionary2Find.ClientConventions;
 
 namespace Dictionary2Find.Tests.Stories
 {
-    public class Dictionaries
+    public class DictionariesFilterKeyValues
     {
         [Fact]
-        public void FilterByValueInDictionary()
+        public void FilterByKeyValueInDictionary()
         {
             new Story("Filter by matching a key/value in a dictionary")
                 .InOrderTo("be able to filter on a value of a specific key in a dictionary")
@@ -42,7 +42,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new IncludeTypeNameInDictionaryKeyFieldNameConvention());
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
         }
 
         private Document document;
@@ -92,12 +92,12 @@ namespace Dictionary2Find.Tests.Stories
         }
     }
 
-    public class DictionariesKeys
+    public class DictionariesFilterStringKeys
     {
         [Fact]
         public void FilterByKeysInDictionary()
         {
-            new Story("Filter by matching a key in a dictionary")
+            new Story("Filter by matching a string key in a dictionary")
                 .InOrderTo("be able to filter on specific key in a dictionary")
                 .AsA("developer")
                 .IWant("to be able to map dictionaries to their correct value type")
@@ -121,7 +121,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new IncludeTypeNameInDictionaryKeyFieldNameConvention());
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
         }
 
         private Document document;
@@ -171,10 +171,249 @@ namespace Dictionary2Find.Tests.Stories
         }
     }
 
-    public class DictionariesValues
+    public class DictionariesSearchStringKeys
+    {
+        [Fact]
+        public void SearchByKeysInDictionary()
+        {
+            new Story("Search by matching a string key in a dictionary")
+                .InOrderTo("be able to search on keys in a dictionary")
+                .AsA("developer")
+                .IWant("to be able to map dictionaries to their correct value type")
+                .WithScenario("map dictionaries to their correct value type")
+                .Given(IHaveAClient)
+                    .And(IHaveMappedTypesToDictionaryKeys)
+                    .And(IHaveADocument)
+                    .And(TheDocumentContainsAMetadataEntryWithAuthorHenrik)
+                    .And(IHaveIndexedTheDocumentObject)
+                    .And(IHaveWaitedForASecond)
+                .When(ISearchForADocumentWithAuthorInTheMetadataEntries)
+                .Then(IShouldGetASingleHit)
+                .Execute();
+        }
+
+        protected IClient client;
+        void IHaveAClient()
+        {
+            client = Client.CreateFromConfig();
+        }
+
+        void IHaveMappedTypesToDictionaryKeys()
+        {
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+        }
+
+        private Document document;
+        void IHaveADocument()
+        {
+            document = new Document();
+        }
+
+        void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
+        {
+            document.MetadataDictionary.Add("Author", "Henrik");
+        }
+
+        void IHaveIndexedTheDocumentObject()
+        {
+            client.Index(document);
+        }
+
+        void IHaveWaitedForASecond()
+        {
+            Thread.Sleep(1000);
+        }
+
+        SearchResults<Document> result;
+        void ISearchForADocumentWithAuthorInTheMetadataEntries()
+        {
+            result = client.Search<Document>()
+                        .For("Author")
+                        .InField(x => x.MetadataDictionary.Keys)
+                        .GetResult();
+        }
+
+        void IShouldGetASingleHit()
+        {
+            result.TotalMatching.Should().Be(1);
+        }
+
+        public class Document
+        {
+            public Document()
+            {
+                MetadataDictionary = new Dictionary<string, string>();
+            }
+
+            public string Name { get; set; }
+
+            public Dictionary<string, string> MetadataDictionary { get; set; }
+        }
+    }
+
+    public class DictionariesFilterIntKeys
     {
         [Fact]
         public void FilterByKeysInDictionary()
+        {
+            new Story("Filter by matching an int key in a dictionary")
+                .InOrderTo("be able to filter on specific key in a dictionary")
+                .AsA("developer")
+                .IWant("to be able to map dictionaries to their correct value type")
+                .WithScenario("map dictionaries to their correct value type")
+                .Given(IHaveAClient)
+                    .And(IHaveMappedTypesToDictionaryKeys)
+                    .And(IHaveADocument)
+                    .And(TheDocumentContainsAMetadataEntryWithAuthorHenrik)
+                    .And(IHaveIndexedTheDocumentObject)
+                    .And(IHaveWaitedForASecond)
+                .When(ISearchForADocumentWithAuthorInTheMetadataEntries)
+                .Then(IShouldGetASingleHit)
+                .Execute();
+        }
+
+        protected IClient client;
+        void IHaveAClient()
+        {
+            client = Client.CreateFromConfig();
+        }
+
+        void IHaveMappedTypesToDictionaryKeys()
+        {
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+        }
+
+        private Document document;
+        void IHaveADocument()
+        {
+            document = new Document();
+        }
+
+        void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
+        {
+            document.MetadataDictionary.Add(1, "Henrik");
+        }
+
+        void IHaveIndexedTheDocumentObject()
+        {
+            client.Index(document);
+        }
+
+        void IHaveWaitedForASecond()
+        {
+            Thread.Sleep(1000);
+        }
+
+        SearchResults<Document> result;
+        void ISearchForADocumentWithAuthorInTheMetadataEntries()
+        {
+            result = client.Search<Document>()
+                        .Filter(x => x.MetadataDictionary.Keys.Match(1))
+                        .GetResult();
+        }
+
+        void IShouldGetASingleHit()
+        {
+            result.TotalMatching.Should().Be(1);
+        }
+
+        public class Document
+        {
+            public Document()
+            {
+                MetadataDictionary = new Dictionary<int, string>();
+            }
+
+            public string Name { get; set; }
+
+            public Dictionary<int, string> MetadataDictionary { get; set; }
+        }
+    }
+
+    public class DictionariesSearchIntKeys
+    {
+        [Fact]
+        public void SearchByIntKeysInDictionary()
+        {
+            new Story("Search by matching a int key in a dictionary")
+                .InOrderTo("be able to search on keys in a dictionary")
+                .AsA("developer")
+                .IWant("to be able to map dictionaries to their correct value type")
+                .WithScenario("map dictionaries to their correct value type")
+                .Given(IHaveAClient)
+                    .And(IHaveMappedTypesToDictionaryKeys)
+                    .And(IHaveADocument)
+                    .And(TheDocumentContainsAMetadataEntryWithAuthorHenrik)
+                    .And(IHaveIndexedTheDocumentObject)
+                    .And(IHaveWaitedForASecond)
+                .When(ISearchForADocumentWithAuthorInTheMetadataEntries)
+                .Then(IShouldGetASingleHit)
+                .Execute();
+        }
+
+        protected IClient client;
+        void IHaveAClient()
+        {
+            client = Client.CreateFromConfig();
+        }
+
+        void IHaveMappedTypesToDictionaryKeys()
+        {
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+        }
+
+        private Document document;
+        void IHaveADocument()
+        {
+            document = new Document();
+        }
+
+        void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
+        {
+            document.MetadataDictionary.Add(1, "Henrik");
+        }
+
+        void IHaveIndexedTheDocumentObject()
+        {
+            client.Index(document);
+        }
+
+        void IHaveWaitedForASecond()
+        {
+            Thread.Sleep(1000);
+        }
+
+        SearchResults<Document> result;
+        void ISearchForADocumentWithAuthorInTheMetadataEntries()
+        {
+            result = client.Search<Document>()
+                        .For("1")
+                        .InField(x => x.MetadataDictionary.Keys)
+                        .GetResult();
+        }
+
+        void IShouldGetASingleHit()
+        {
+            result.TotalMatching.Should().Be(1);
+        }
+
+        public class Document
+        {
+            public Document()
+            {
+                MetadataDictionary = new Dictionary<int, string>();
+            }
+
+            public string Name { get; set; }
+
+            public Dictionary<int, string> MetadataDictionary { get; set; }
+        }
+    }
+
+    public class DictionariesFilterValues
+    {
+        [Fact]
+        public void FilterByValuesInDictionary()
         {
             new Story("Filter by matching a value in a dictionary")
                 .InOrderTo("be able to filter on specific value in a dictionary")
@@ -200,7 +439,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new IncludeTypeNameInDictionaryKeyFieldNameConvention());
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
         }
 
         private Document document;
@@ -229,6 +468,86 @@ namespace Dictionary2Find.Tests.Stories
         {
             result = client.Search<Document>()
                         .Filter(x => x.MetadataDictionary.Values.Match("Henrik"))
+                        .GetResult();
+        }
+
+        void IShouldGetASingleHit()
+        {
+            result.TotalMatching.Should().Be(1);
+        }
+
+        public class Document
+        {
+            public Document()
+            {
+                MetadataDictionary = new Dictionary<string, string>();
+            }
+
+            public string Name { get; set; }
+
+            public Dictionary<string, string> MetadataDictionary { get; set; }
+        }
+    }
+
+    public class DictionariesSearchValues
+    {
+        [Fact]
+        public void SearchByValuesInDictionary()
+        {
+            new Story("Search by matching a value in a dictionary")
+                .InOrderTo("be able to search on values in a dictionary")
+                .AsA("developer")
+                .IWant("to be able to map dictionaries to their correct value type")
+                .WithScenario("map dictionaries to their correct value type")
+                .Given(IHaveAClient)
+                    .And(IHaveMappedTypesToDictionaryKeys)
+                    .And(IHaveADocument)
+                    .And(TheDocumentContainsAMetadataEntryWithAuthorHenrik)
+                    .And(IHaveIndexedTheDocumentObject)
+                    .And(IHaveWaitedForASecond)
+                .When(ISearchForADocumentWithHenrikInTheMetadataValues)
+                .Then(IShouldGetASingleHit)
+                .Execute();
+        }
+
+        protected IClient client;
+        void IHaveAClient()
+        {
+            client = Client.CreateFromConfig();
+        }
+
+        void IHaveMappedTypesToDictionaryKeys()
+        {
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+        }
+
+        private Document document;
+        void IHaveADocument()
+        {
+            document = new Document();
+        }
+
+        void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
+        {
+            document.MetadataDictionary.Add("Author", "Henrik");
+        }
+
+        void IHaveIndexedTheDocumentObject()
+        {
+            client.Index(document);
+        }
+
+        void IHaveWaitedForASecond()
+        {
+            Thread.Sleep(1000);
+        }
+
+        SearchResults<Document> result;
+        void ISearchForADocumentWithHenrikInTheMetadataValues()
+        {
+            result = client.Search<Document>()
+                        .For("Henrik")
+                        .InField(x => x.MetadataDictionary.Values)
                         .GetResult();
         }
 
@@ -279,7 +598,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new IncludeTypeNameInDictionaryKeyFieldNameConvention());
+            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
         }
 
         private Store store;

@@ -52,7 +52,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientConventions\IncludeTypeNameInDictionaryKeyFieldNameConvention.cs" />
+    <Compile Include="ClientConventions\DictionaryConvention.cs" />
     <Compile Include="Json\DictionaryConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -9,7 +9,7 @@ using Dictionary2Find.Json;
 
 namespace Dictionary2Find.ClientConventions
 {
-    public class IncludeTypeNameInDictionaryKeyFieldNameConvention : IInterceptContract
+    public class DictionaryConvention : IInterceptContract
     {
         public JsonContract ModifyContract(JsonContract contract)
         {
