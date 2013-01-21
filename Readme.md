@@ -13,7 +13,7 @@ See http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages
 Include the IncludeTypeNameInDictionaryKeyFieldNameConvention to the conventions:
 
 ```c#
-client.Conventions.ContractResolver.ContractInterceptors.Add(new IncludeTypeNameInDictionaryKeyFieldNameConvention());
+client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
 ```
 
 and start searching:
