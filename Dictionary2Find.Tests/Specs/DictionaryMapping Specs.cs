@@ -12,37 +12,46 @@ using Dictionary2Find.Json;
 
 namespace Dictionary2Find.Tests.Specs
 {
-    public class when_serializing_a_document_with_a_string_to_string_dictionary
+    public class when_serializing_a_document_with_dictionaries
     {
         static JsonSerializer serializer;
         static string serializedString;
+        static Document originalDocument;
 
         Establish context = () =>
         {
             serializer = Serializer.CreateDefault();
             var conventions = new DefaultConventions();
-            conventions.ContractResolver.ContractInterceptors.Add(new IncludeTypeNameInDictionaryKeyFieldNameConvention());
+            conventions.AddDictionaryConventions();
             serializer.ContractResolver = conventions.ContractResolver;
+
+            originalDocument = new Document();
+            originalDocument.Name = "Name";
+            originalDocument.StringToStringDictionary.Add("key", "value");
+            originalDocument.StringToStringDictionary.Add("key2", "value2");
+            originalDocument.IntToStringDictionary.Add(1, "value");
+            originalDocument.StringToIntDictionary.Add("key", 1);
+            originalDocument.StringToDoubleDictionary.Add("key", 1.0);
+            originalDocument.StringToDateTimeDictionary.Add("key", DateTime.Now);
         };
 
+        static Document deserializedDocument;
         Because of = () =>
         {
-            var document = new Document();
-            document.Name = "Hej";
-            document.StringToStringDictionary.Add("key", "value");
-            document.StringToStringDictionary.Add("key2", "value2");
-            document.IntToStringDictionary.Add(1, "value");
-            //document.StringToIntDictionary.Add("key", 1);
-            //document.StringToDoubleDictionary.Add("key", 1.0);
-            //document.StringToDateTimeDictionary.Add("key", DateTime.Now);
-            serializedString = serializer.Serialize(document);
+            serializedString = serializer.Serialize(originalDocument);
 
-            var document2 = serializer.Deserialize<Document>(serializedString);
-            var key = document2.StringToStringDictionary["key"];
+            deserializedDocument = serializer.Deserialize<Document>(serializedString);
         };
 
-        It should_be_suffixed_nested = () =>
-            serializedString.ShouldEqual("$$string");
+        It should_equal_the_original_object = () =>
+        {
+            deserializedDocument.StringToStringDictionary["key"].ShouldEqual("value");
+            deserializedDocument.StringToStringDictionary["key2"].ShouldEqual("value2");
+            deserializedDocument.IntToStringDictionary[1].ShouldEqual("value");
+            deserializedDocument.StringToIntDictionary["key"].ShouldEqual(1);
+            deserializedDocument.StringToDoubleDictionary["key"].ShouldEqual(1.0);
+            deserializedDocument.StringToDateTimeDictionary["key"].ShouldBeCloseTo(DateTime.Now, new TimeSpan(0, 0, 1));
+        };
     }
 
     public class Document
@@ -51,9 +60,9 @@ namespace Dictionary2Find.Tests.Specs
         {
             StringToStringDictionary = new Dictionary<string, string>();
             IntToStringDictionary = new Dictionary<int, string>();
-            //StringToIntDictionary = new Dictionary<string, int>();
-            //StringToDoubleDictionary = new Dictionary<string, double>();
-            //StringToDateTimeDictionary = new Dictionary<string, DateTime>();
+            StringToIntDictionary = new Dictionary<string, int>();
+            StringToDoubleDictionary = new Dictionary<string, double>();
+            StringToDateTimeDictionary = new Dictionary<string, DateTime>();
         }
 
         public string Name { get; set; }
@@ -62,10 +71,10 @@ namespace Dictionary2Find.Tests.Specs
 
         public Dictionary<int, string> IntToStringDictionary { get; set; }
 
-        //public Dictionary<string, int> StringToIntDictionary { get; set; }
+        public Dictionary<string, int> StringToIntDictionary { get; set; }
 
-        //public Dictionary<string, double> StringToDoubleDictionary { get; set; }
+        public Dictionary<string, double> StringToDoubleDictionary { get; set; }
 
-        //public Dictionary<string, DateTime> StringToDateTimeDictionary { get; set; }
+        public Dictionary<string, DateTime> StringToDateTimeDictionary { get; set; }
     }
 }
