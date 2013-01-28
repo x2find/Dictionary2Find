@@ -42,7 +42,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Document document;
@@ -121,7 +121,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Document document;
@@ -200,7 +200,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Document document;
@@ -280,7 +280,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Document document;
@@ -359,7 +359,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Document document;
@@ -439,7 +439,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Document document;
@@ -518,7 +518,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Document document;
@@ -598,7 +598,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void IHaveMappedTypesToDictionaryKeys()
         {
-            client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+            client.Conventions.AddDictionaryConventions();
         }
 
         private Store store;

@@ -10,10 +10,10 @@ See http://docs.nuget.org/docs/workflows/using-nuget-without-committing-packages
 
 ### Usage
 
-Include the IncludeTypeNameInDictionaryKeyFieldNameConvention to the conventions:
+Add DictionaryConventions to the conventions:
 
 ```c#
-client.Conventions.ContractResolver.ContractInterceptors.Add(new DictionaryConvention());
+client.Conventions.AddDictionaryConventions();
 ```
 
 and start searching:
