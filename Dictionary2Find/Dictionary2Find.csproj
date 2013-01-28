@@ -53,7 +53,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientConventions\DictionaryClientConventionsExtensions.cs" />
-    <Compile Include="ClientConventions\DictionaryConvention.cs" />
+    <Compile Include="ClientConventions\DictionaryInterceptor.cs" />
     <Compile Include="Json\DictionaryConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

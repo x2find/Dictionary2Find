@@ -51,6 +51,11 @@ namespace Dictionary2Find.Json
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
+            if (existingValue == null)
+            {
+                existingValue = objectType.GetConstructor(new Type[0]).Invoke(new object[0]);
+            }
+
             IList<Type> genericArguments = objectType.GetGenericArguments();
             Type keyType = genericArguments[0];
             Type valueType = genericArguments[1];
