@@ -75,7 +75,11 @@ namespace Dictionary2Find.Json
                     continue;
                 }
                 key = PropertyNameDesolver(keyValue.ToString());
-                if(!keyType.IsAssignableFrom(typeof(string)))
+                if (keyType.IsEnum)
+                {
+                    key = Enum.Parse(keyType, key.ToString());
+                }
+                else if (!keyType.IsAssignableFrom(typeof(string)))
                 {
                     // try to parse the key if not a string
                     key = keyType.GetMethod("Parse", new Type[] { typeof(string) }).Invoke(null, new[] { key });

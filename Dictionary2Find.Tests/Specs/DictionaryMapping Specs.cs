@@ -33,6 +33,7 @@ namespace Dictionary2Find.Tests.Specs
             originalDocument.StringToIntDictionary.Add("key", 1);
             originalDocument.StringToDoubleDictionary.Add("key", 1.0);
             originalDocument.StringToDateTimeDictionary.Add("key", DateTime.Now);
+            originalDocument.EnumToStringDictionary.Add(KeyEnum.EnumValue, "value");
         };
 
         static Document deserializedDocument;
@@ -51,7 +52,13 @@ namespace Dictionary2Find.Tests.Specs
             deserializedDocument.StringToIntDictionary["key"].ShouldEqual(1);
             deserializedDocument.StringToDoubleDictionary["key"].ShouldEqual(1.0);
             deserializedDocument.StringToDateTimeDictionary["key"].ShouldBeCloseTo(DateTime.Now, new TimeSpan(0, 0, 1));
+            deserializedDocument.EnumToStringDictionary[KeyEnum.EnumValue].ShouldEqual("value");
         };
+    }
+
+    public enum KeyEnum
+    {
+        EnumValue
     }
 
     public class Document
@@ -63,6 +70,7 @@ namespace Dictionary2Find.Tests.Specs
             StringToIntDictionary = new Dictionary<string, int>();
             StringToDoubleDictionary = new Dictionary<string, double>();
             StringToDateTimeDictionary = new Dictionary<string, DateTime>();
+            EnumToStringDictionary = new Dictionary<KeyEnum, string>();
         }
 
         public string Name { get; set; }
@@ -76,5 +84,7 @@ namespace Dictionary2Find.Tests.Specs
         public Dictionary<string, double> StringToDoubleDictionary { get; set; }
 
         public Dictionary<string, DateTime> StringToDateTimeDictionary { get; set; }
+
+        public Dictionary<KeyEnum, string> EnumToStringDictionary { get; set; }
     }
 }
