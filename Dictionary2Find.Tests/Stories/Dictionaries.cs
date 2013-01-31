@@ -53,7 +53,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
         {
-            document.MetadataDictionary.Add("Author", "Henrik");
+            document.MetadataStringStringDictionary.Add("Author", "Henrik");
         }
 
         void IHaveIndexedTheDocumentObject()
@@ -70,7 +70,7 @@ namespace Dictionary2Find.Tests.Stories
         void ISearchForADocumentWithAuthorHenrikInTheMetadataEntries()
         {
             result = client.Search<Document>()
-                        .Filter(x => x.MetadataDictionary["Author"].Match("Henrik"))
+                        .Filter(x => x.MetadataStringStringDictionary["Author"].Match("Henrik"))
                         .GetResult();
         }
 
@@ -83,12 +83,12 @@ namespace Dictionary2Find.Tests.Stories
         {
             public Document()
             {
-                MetadataDictionary = new Dictionary<string, string>();
+                MetadataStringStringDictionary = new Dictionary<string, string>();
             }
 
             public string Name { get; set; }
 
-            public Dictionary<string, string> MetadataDictionary { get; set; }
+            public Dictionary<string, string> MetadataStringStringDictionary { get; set; }
         }
     }
 
@@ -132,7 +132,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
         {
-            document.MetadataDictionary.Add("Author", "Henrik");
+            document.MetadataStringStringDictionary.Add("Author", "Henrik");
         }
 
         void IHaveIndexedTheDocumentObject()
@@ -149,7 +149,7 @@ namespace Dictionary2Find.Tests.Stories
         void ISearchForADocumentWithAuthorInTheMetadataEntries()
         {
             result = client.Search<Document>()
-                        .Filter(x => x.MetadataDictionary.Keys.Match("Author"))
+                        .Filter(x => x.MetadataStringStringDictionary.Keys.Match("Author"))
                         .GetResult();
         }
 
@@ -162,12 +162,12 @@ namespace Dictionary2Find.Tests.Stories
         {
             public Document()
             {
-                MetadataDictionary = new Dictionary<string, string>();
+                MetadataStringStringDictionary = new Dictionary<string, string>();
             }
 
             public string Name { get; set; }
 
-            public Dictionary<string, string> MetadataDictionary { get; set; }
+            public Dictionary<string, string> MetadataStringStringDictionary { get; set; }
         }
     }
 
@@ -211,7 +211,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
         {
-            document.MetadataDictionary.Add("Author", "Henrik");
+            document.MetadataStringStringDictionary.Add("Author", "Henrik");
         }
 
         void IHaveIndexedTheDocumentObject()
@@ -229,7 +229,7 @@ namespace Dictionary2Find.Tests.Stories
         {
             result = client.Search<Document>()
                         .For("Author")
-                        .InField(x => x.MetadataDictionary.Keys)
+                        .InField(x => x.MetadataStringStringDictionary.Keys)
                         .GetResult();
         }
 
@@ -242,12 +242,12 @@ namespace Dictionary2Find.Tests.Stories
         {
             public Document()
             {
-                MetadataDictionary = new Dictionary<string, string>();
+                MetadataStringStringDictionary = new Dictionary<string, string>();
             }
 
             public string Name { get; set; }
 
-            public Dictionary<string, string> MetadataDictionary { get; set; }
+            public Dictionary<string, string> MetadataStringStringDictionary { get; set; }
         }
     }
 
@@ -291,7 +291,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
         {
-            document.MetadataDictionary.Add(1, "Henrik");
+            document.MetadataIntStringDictionary.Add(1, "Henrik");
         }
 
         void IHaveIndexedTheDocumentObject()
@@ -308,7 +308,7 @@ namespace Dictionary2Find.Tests.Stories
         void ISearchForADocumentWithAuthorInTheMetadataEntries()
         {
             result = client.Search<Document>()
-                        .Filter(x => x.MetadataDictionary.Keys.Match(1))
+                        .Filter(x => x.MetadataIntStringDictionary.Keys.Match(1))
                         .GetResult();
         }
 
@@ -321,12 +321,12 @@ namespace Dictionary2Find.Tests.Stories
         {
             public Document()
             {
-                MetadataDictionary = new Dictionary<int, string>();
+                MetadataIntStringDictionary = new Dictionary<int, string>();
             }
 
             public string Name { get; set; }
 
-            public Dictionary<int, string> MetadataDictionary { get; set; }
+            public Dictionary<int, string> MetadataIntStringDictionary { get; set; }
         }
     }
 
@@ -370,7 +370,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
         {
-            document.MetadataDictionary.Add(1, "Henrik");
+            document.MetadataIntStringDictionary.Add(1, "Henrik");
         }
 
         void IHaveIndexedTheDocumentObject()
@@ -388,7 +388,7 @@ namespace Dictionary2Find.Tests.Stories
         {
             result = client.Search<Document>()
                         .For("1")
-                        .InField(x => x.MetadataDictionary.Keys)
+                        .InField(x => x.MetadataIntStringDictionary.Keys)
                         .GetResult();
         }
 
@@ -401,12 +401,180 @@ namespace Dictionary2Find.Tests.Stories
         {
             public Document()
             {
-                MetadataDictionary = new Dictionary<int, string>();
+                MetadataIntStringDictionary = new Dictionary<int, string>();
             }
 
             public string Name { get; set; }
 
-            public Dictionary<int, string> MetadataDictionary { get; set; }
+            public Dictionary<int, string> MetadataIntStringDictionary { get; set; }
+        }
+    }
+
+    public class DictionariesFilterEnumKeys
+    {
+        [Fact]
+        public void FilterByKeysInDictionary()
+        {
+            new Story("Filter by matching an enum key in a dictionary")
+                .InOrderTo("be able to filter on specific key in a dictionary")
+                .AsA("developer")
+                .IWant("to be able to map dictionaries to their correct value type")
+                .WithScenario("map dictionaries to their correct value type")
+                .Given(IHaveAClient)
+                    .And(IHaveMappedTypesToDictionaryKeys)
+                    .And(IHaveADocument)
+                    .And(TheDocumentContainsAMetadataEntryWithAuthorHenrik)
+                    .And(IHaveIndexedTheDocumentObject)
+                    .And(IHaveWaitedForASecond)
+                .When(ISearchForADocumentWithAuthorInTheMetadataEntries)
+                .Then(IShouldGetASingleHit)
+                .Execute();
+        }
+
+        protected IClient client;
+        void IHaveAClient()
+        {
+            client = Client.CreateFromConfig();
+        }
+
+        void IHaveMappedTypesToDictionaryKeys()
+        {
+            client.Conventions.AddDictionaryConventions();
+        }
+
+        private Document document;
+        void IHaveADocument()
+        {
+            document = new Document();
+        }
+
+        void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
+        {
+            document.MetadataEnumStringDictionary.Add(KeyEnum.EnumValue, "Henrik");
+        }
+
+        void IHaveIndexedTheDocumentObject()
+        {
+            client.Index(document);
+        }
+
+        void IHaveWaitedForASecond()
+        {
+            Thread.Sleep(1000);
+        }
+
+        SearchResults<Document> result;
+        void ISearchForADocumentWithAuthorInTheMetadataEntries()
+        {
+            result = client.Search<Document>()
+                        .Filter(x => x.MetadataEnumStringDictionary.Keys.Match(KeyEnum.EnumValue))
+                        .GetResult();
+        }
+
+        void IShouldGetASingleHit()
+        {
+            result.TotalMatching.Should().Be(1);
+        }
+
+        public enum KeyEnum
+        {
+            EnumValue
+        }
+
+        public class Document
+        {
+            public Document()
+            {
+                MetadataEnumStringDictionary = new Dictionary<KeyEnum, string>();
+            }
+
+            public string Name { get; set; }
+
+            public Dictionary<KeyEnum, string> MetadataEnumStringDictionary { get; set; }
+        }
+    }
+
+    public class DictionariesFilterEnumKeysValues
+    {
+        [Fact]
+        public void SearchByIntKeysInDictionary()
+        {
+            new Story("Search by matching a enum key/value in a dictionary")
+                .InOrderTo("be able to filter on a value of a specific key in a dictionary")
+                .AsA("developer")
+                .IWant("to be able to map dictionaries to their correct value type")
+                .WithScenario("map dictionaries to their correct value type")
+                .Given(IHaveAClient)
+                    .And(IHaveMappedTypesToDictionaryKeys)
+                    .And(IHaveADocument)
+                    .And(TheDocumentContainsAMetadataEntryWithAuthorHenrik)
+                    .And(IHaveIndexedTheDocumentObject)
+                    .And(IHaveWaitedForASecond)
+                .When(ISearchForADocumentWithAuthorInTheMetadataEntries)
+                .Then(IShouldGetASingleHit)
+                .Execute();
+        }
+
+        protected IClient client;
+        void IHaveAClient()
+        {
+            client = Client.CreateFromConfig();
+        }
+
+        void IHaveMappedTypesToDictionaryKeys()
+        {
+            client.Conventions.AddDictionaryConventions();
+        }
+
+        private Document document;
+        void IHaveADocument()
+        {
+            document = new Document();
+        }
+
+        void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
+        {
+            document.MetadataEnumStringDictionary.Add(KeyEnum.EnumValue, "Henrik");
+        }
+
+        void IHaveIndexedTheDocumentObject()
+        {
+            client.Index(document);
+        }
+
+        void IHaveWaitedForASecond()
+        {
+            Thread.Sleep(1000);
+        }
+
+        SearchResults<Document> result;
+        void ISearchForADocumentWithAuthorInTheMetadataEntries()
+        {
+            result = client.Search<Document>()
+                        .Filter(x => x.MetadataEnumStringDictionary[KeyEnum.EnumValue].Match("Henrik"))
+                        .GetResult();
+        }
+
+        void IShouldGetASingleHit()
+        {
+            result.TotalMatching.Should().Be(1);
+        }
+
+        public enum KeyEnum
+        {
+            EnumValue
+        }
+
+        public class Document
+        {
+            public Document()
+            {
+                MetadataEnumStringDictionary = new Dictionary<KeyEnum, string>();
+            }
+
+            public string Name { get; set; }
+
+            public Dictionary<KeyEnum, string> MetadataEnumStringDictionary { get; set; }
         }
     }
 
@@ -450,7 +618,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
         {
-            document.MetadataDictionary.Add("Author", "Henrik");
+            document.MetadataStringStringDictionary.Add("Author", "Henrik");
         }
 
         void IHaveIndexedTheDocumentObject()
@@ -467,7 +635,7 @@ namespace Dictionary2Find.Tests.Stories
         void ISearchForADocumentWithHenrikInTheMetadataValues()
         {
             result = client.Search<Document>()
-                        .Filter(x => x.MetadataDictionary.Values.Match("Henrik"))
+                        .Filter(x => x.MetadataStringStringDictionary.Values.Match("Henrik"))
                         .GetResult();
         }
 
@@ -480,12 +648,12 @@ namespace Dictionary2Find.Tests.Stories
         {
             public Document()
             {
-                MetadataDictionary = new Dictionary<string, string>();
+                MetadataStringStringDictionary = new Dictionary<string, string>();
             }
 
             public string Name { get; set; }
 
-            public Dictionary<string, string> MetadataDictionary { get; set; }
+            public Dictionary<string, string> MetadataStringStringDictionary { get; set; }
         }
     }
 
@@ -529,7 +697,7 @@ namespace Dictionary2Find.Tests.Stories
 
         void TheDocumentContainsAMetadataEntryWithAuthorHenrik()
         {
-            document.MetadataDictionary.Add("Author", "Henrik");
+            document.MetadataStringStringDictionary.Add("Author", "Henrik");
         }
 
         void IHaveIndexedTheDocumentObject()
@@ -547,7 +715,7 @@ namespace Dictionary2Find.Tests.Stories
         {
             result = client.Search<Document>()
                         .For("Henrik")
-                        .InField(x => x.MetadataDictionary.Values)
+                        .InField(x => x.MetadataStringStringDictionary.Values)
                         .GetResult();
         }
 
@@ -560,12 +728,12 @@ namespace Dictionary2Find.Tests.Stories
         {
             public Document()
             {
-                MetadataDictionary = new Dictionary<string, string>();
+                MetadataStringStringDictionary = new Dictionary<string, string>();
             }
 
             public string Name { get; set; }
 
-            public Dictionary<string, string> MetadataDictionary { get; set; }
+            public Dictionary<string, string> MetadataStringStringDictionary { get; set; }
         }
     }
 
