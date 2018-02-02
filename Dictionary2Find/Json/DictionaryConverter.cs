@@ -36,7 +36,7 @@ namespace Dictionary2Find.Json
 
                 var keyPairKey = keyProperty.GetGetMethod().Invoke(item, null);
                 keys.Add(keyPairKey);
-                writer.WritePropertyName(!contract.IsNull() ? contract.PropertyNameResolver(keyPairKey.ToString()) : keyPairKey.ToString());
+                writer.WritePropertyName(!contract.IsNull() ? contract.DictionaryKeyResolver(keyPairKey.ToString()) : keyPairKey.ToString());
                 var keyPairValue = valueProperty.GetGetMethod().Invoke(item, null);
                 values.Add(keyPairValue);
                 serializer.Serialize(writer, keyPairValue);
