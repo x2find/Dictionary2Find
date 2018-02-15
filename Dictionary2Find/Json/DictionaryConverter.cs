@@ -22,26 +22,31 @@ namespace Dictionary2Find.Json
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
-            // if it is a JsonDictionaryContract use the PropertyNameResolver
-            var contract = serializer.ContractResolver.ResolveContract(value.GetType()) as JsonDictionaryContract;
+            Type valueType = value.GetType();
+            // if it is a JsonDictionaryContract use the DictionaryKeyResolver
+            var contract = serializer.ContractResolver.ResolveContract(valueType) as JsonDictionaryContract;
+
             List<object> keys = new List<object>();
             List<object> values = new List<object>();
+            string valueTypeName = valueType.FullName;
 
             writer.WriteStartObject();
             foreach (var item in (IEnumerable)value)
             {
-                Type t = item.GetType();
-                PropertyInfo keyProperty = t.GetProperty("Key");
-                PropertyInfo valueProperty = t.GetProperty("Value");
+                Type itemType = item.GetType();
+                PropertyInfo keyProperty = itemType.GetProperty("Key");
+                PropertyInfo valueProperty = itemType.GetProperty("Value");
 
                 var keyPairKey = keyProperty.GetGetMethod().Invoke(item, null);
                 keys.Add(keyPairKey);
-                writer.WritePropertyName(!contract.IsNull() ? contract.PropertyNameResolver(keyPairKey.ToString()) : keyPairKey.ToString());
+                writer.WritePropertyName(!contract.IsNull() ? contract.DictionaryKeyResolver(keyPairKey.ToString()) : keyPairKey.ToString());
                 var keyPairValue = valueProperty.GetGetMethod().Invoke(item, null);
                 values.Add(keyPairValue);
                 serializer.Serialize(writer, keyPairValue);
             }
 
+            writer.WritePropertyName("$type");
+            serializer.Serialize(writer, valueTypeName);
             writer.WritePropertyName("Keys");
             serializer.Serialize(writer, keys);
             writer.WritePropertyName("Values");
@@ -74,6 +79,11 @@ namespace Dictionary2Find.Json
                     reader.Read();
                     continue;
                 }
+                else if (keyValue.Equals("$type"))
+                {
+                    reader.Read();
+                    continue;
+                }
                 key = PropertyNameDesolver(keyValue.ToString());
                 if (keyType.IsEnum)
                 {
@@ -87,12 +97,12 @@ namespace Dictionary2Find.Json
 
                 reader.Read();
                 value = serializer.Deserialize(reader, valueType);
-                
+
                 objectType.GetMethod("Add").Invoke(existingValue, new[] { key, value });
 
                 reader.Read();
             }
-            
+
             return existingValue;
         }
 

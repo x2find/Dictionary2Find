@@ -5,7 +5,6 @@ using System.Text;
 using EPiServer.Find.Json;
 using Newtonsoft.Json.Serialization;
 using EPiServer.Find;
-using Dictionary2Find.Json;
 
 namespace Dictionary2Find.ClientConventions
 {
@@ -18,18 +17,18 @@ namespace Dictionary2Find.ClientConventions
                 var dictionaryContract = contract as JsonDictionaryContract;
                 if (typeof(GeoLocation).IsAssignableFrom(dictionaryContract.DictionaryValueType))
                 {
-                    dictionaryContract.PropertyNameResolver = x => x + "$$geo";
+                    dictionaryContract.DictionaryKeyResolver = x => x + "$$geo";
                 }
                 else if (typeof(Attachment).IsAssignableFrom(dictionaryContract.DictionaryValueType))
                 {
-                    dictionaryContract.PropertyNameResolver = x => x + "$$attachment";
+                    dictionaryContract.DictionaryKeyResolver = x => x + "$$attachment";
                 }
                 else
                 {
-                    dictionaryContract.PropertyNameResolver = x => TypeSuffix.GetSuffixedFieldName(x, dictionaryContract.DictionaryValueType);
+                    dictionaryContract.DictionaryKeyResolver = x => TypeSuffix.GetSuffixedFieldName(x, dictionaryContract.DictionaryValueType);
                 }
 
-                dictionaryContract.Converter = new DictionaryConverter() { PropertyNameDesolver = x => x.Contains('$') ? x.Split('$')[0] : x };
+                dictionaryContract.Converter = new Dictionary2Find.Json.DictionaryConverter() { PropertyNameDesolver = x => x.Contains('$') ? x.Split('$')[0] : x };
             }
 
             return contract;
