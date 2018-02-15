@@ -79,6 +79,11 @@ namespace Dictionary2Find.Json
                     reader.Read();
                     continue;
                 }
+                else if (keyValue.Equals("$type"))
+                {
+                    reader.Read();
+                    continue;
+                }
                 key = PropertyNameDesolver(keyValue.ToString());
                 if (keyType.IsEnum)
                 {
@@ -92,12 +97,12 @@ namespace Dictionary2Find.Json
 
                 reader.Read();
                 value = serializer.Deserialize(reader, valueType);
-                
+
                 objectType.GetMethod("Add").Invoke(existingValue, new[] { key, value });
 
                 reader.Read();
             }
-            
+
             return existingValue;
         }
 
